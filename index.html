@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversão Decimal para Binário</title>
+    <script type="text/javascript" src="https://me.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=TSWJqD0WNcQ2l_dWxDUUlUL7sY28IDO30BeGoaGPWAUX443a4_qo1zEK-lSEA55MruQjo_oDa3739ku27Z1_1cG987jFHFjbMpmAuVGMcOIygezLYjfm_nKURpbWxN3Qsr2VtXKOK1giUnH3s9qI1ERwnvZsWUzRbiT06S3VgGjnAsowBSIlDLX7vyVkBAb9xnX0qcZ51ftZ6fume9T2VMMjza-XKqenm6H4XJWilBUUWyQIyRGY-t03PVz8FVycB7lEvgKcV4S3IhCGXeGBBg" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://me.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jZG4uZGlzY29yZGFwcC5jb20vYXR0YWNobWVudHMvMTMwMzg4NTI3NzUwODQwNzM3OS8xMzAzODg4ODExNzI5NjE2OTg3L2pvZ281Lmh0bWw_ZXg9NjcyZDY0OTUmaXM9NjcyYzEzMTUmaG09MTkyMzM4NTM4M2UwYzJiYzQyYThiZTgyZmNjN2IwYWY3MGY5OWQ3N2ZmYzRlMmYzOTdkNzA4ZjNhNzdkNTY4NiY"/><style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f3f3;
+        }
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        .step, .result {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+        .final-binary {
+            font-weight: bold;
+            color: green;
+        }
+        .binary-progress {
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 10px;
+        }
+        .division-visual {
+            color: #333;
+            font-size: 14px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversão Decimal para Binário</h1>
+        <input type="number" id="decimalInput" placeholder="Insira um número decimal">
+        <button onclick="startConversion()">Iniciar Conversão</button>
+        <div class="step" id="stepContainer"></div>
+        <div class="error" id="error"></div>
+        <div class="result" id="result"></div>
+        <div class="binary-progress" id="binaryProgress"></div>
+    </div>
+
+    <script>
+        let decimalNumber;
+        let binaryResult = "";
+        let stepCounter = 0;
+
+        function startConversion() {
+            const decimalInput = document.getElementById("decimalInput").value;
+            if (decimalInput === "") {
+                alert("Por favor, insira um número decimal.");
+                return;
+            }
+
+            decimalNumber = parseInt(decimalInput);
+            binaryResult = "";
+            stepCounter = 1;
+
+            document.getElementById("stepContainer").innerHTML = "";
+            document.getElementById("error").innerHTML = "";
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("binaryProgress").innerHTML = "";
+
+            showNextStep();
+        }
+
+        function showNextStep() {
+            if (decimalNumber <= 0) {
+                showFinalResult();
+                return;
+            }
+
+            const stepContainer = document.getElementById("stepContainer");
+            stepContainer.innerHTML = `
+                <p>Passo ${stepCounter}: ${decimalNumber} ÷ 2</p>
+                <div class="division-visual">Divisão: ${decimalNumber} ÷ 2 = <span id="quotientVisual">?</span>, Resto = <span id="remainderVisual">?</span></div>
+                <label>Digite o quociente:</label>
+                <input type="number" id="quotientInput" placeholder="Quociente">
+                <label>Digite o resto:</label>
+                <input type="number" id="remainderInput" placeholder="Resto">
+                <button onclick="checkStep()">Confirmar</button>
+            `;
+        }
+
+        function checkStep() {
+            const quotientInput = parseInt(document.getElementById("quotientInput").value);
+            const remainderInput = parseInt(document.getElementById("remainderInput").value);
+
+            const correctQuotient = Math.floor(decimalNumber / 2);
+            const correctRemainder = decimalNumber % 2;
+
+            if (quotientInput !== correctQuotient || remainderInput !== correctRemainder) {
+                document.getElementById("error").innerHTML = `
+                    <p>Erro! O quociente correto é ${correctQuotient} e o resto é ${correctRemainder}. Tente novamente.</p>
+                `;
+                document.getElementById("quotientVisual").innerText = correctQuotient;
+                document.getElementById("remainderVisual").innerText = correctRemainder;
+                return;
+            }
+
+            document.getElementById("error").innerHTML = "";
+            document.getElementById("quotientVisual").innerText = correctQuotient;
+            document.getElementById("remainderVisual").innerText = correctRemainder;
+            binaryResult = correctRemainder + binaryResult;
+
+            decimalNumber = correctQuotient;
+            stepCounter++;
+
+            // Atualiza a representação visual do número binário
+            document.getElementById("binaryProgress").innerHTML = `Número binário até agora: ${binaryResult.split("").join(" ")}`;
+
+            showNextStep();
+        }
+
+        function showFinalResult() {
+            document.getElementById("stepContainer").innerHTML = "";
+            document.getElementById("result").innerHTML = `
+                <p>Resultado final em binário: <span class="final-binary">${binaryResult}</span></p>
+                <p>Composição do número (de trás para frente): ${binaryResult.split("").join(" ")}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
